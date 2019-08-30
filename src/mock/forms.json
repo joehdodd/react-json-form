@@ -1,0 +1,53 @@
+{
+  "basicInfo": [
+    {
+      "name": "Name",
+      "el": "input",
+      "type": "text",
+      "value": ""
+    },
+    {
+      "name": "Address",
+      "el": "input",
+      "type": "text",
+      "value": ""
+    },
+    {
+      "name": "City",
+      "el": "input",
+      "type": "text",
+      "value": ""
+    },
+    {
+      "name": "State",
+      "el": "input",
+      "type": "text",
+      "value": ""
+    },
+    {
+      "name": "Comments",
+      "el": "textarea",
+      "value": ""
+    },
+    {
+      "name": "Household Size",
+      "el": "select",
+      "options": [1, 2, 3],
+      "value": ""
+    }
+  ],
+  "personalInfo": [
+    {
+      "name": "Weight",
+      "el": "input",
+      "type": "number",
+      "value": ""
+    },
+    {
+      "name": "Height",
+      "el": "input",
+      "type": "number",
+      "value": ""
+    }
+  ]
+}
