@@ -4,17 +4,12 @@ let JSONForms = require("./mock/forms");
 
 const InputField = ({ name, type, handleInputChange, value }) => {
   return (
-    <input
-      name={name}
-      type={type}
-      value={value}
-      onChange={handleInputChange}
-    />
+    <input name={name} type={type} value={value} onChange={handleInputChange} />
   );
 };
 
 const TextAreaField = ({ name, value, handleInputChange }) => {
-return <textarea name={name} value={value} onChange={handleInputChange}/>;
+  return <textarea name={name} value={value} onChange={handleInputChange} />;
 };
 
 const SelectField = ({ name, options, value, handleInputChange }) => {
@@ -22,7 +17,9 @@ const SelectField = ({ name, options, value, handleInputChange }) => {
     <select onChange={handleInputChange} name={name} value={value}>
       <option>Please select an option...</option>
       {options.map(op => (
-        <option key={op} value={op}>{op}</option>
+        <option key={op} value={op}>
+          {op}
+        </option>
       ))}
     </select>
   );
@@ -32,31 +29,33 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       forms: JSONForms,
-      selectedForm: {
-        name: "basicInfo",
-        form: JSONForms.basicInfo,
-        formData: ""
-      }
+      selectedForm: null,
+      formData: {}
     };
   }
 
+  // componentDidMount() {
+  //   Object.keys(JSONForms).map(key =>
+  //     this.setState(prevState => ({
+  //       formData: {
+  //         ...prevState.formData,
+  //         [key]: {}
+  //       }
+  //     }))
+  //   );
+  // }
+
   handleInputChange = e => {
     e.persist();
-    let newForm = {
-      [this.state.selectedForm.name]: this.state.forms[
-        this.state.selectedForm.name
-      ].map(field => {
-        if (field.name === e.target.name) {
-          field.value = e.target.value;
-        }
-        return field;
-      })
-    };
     return this.setState(prevState => ({
-      forms: {
-        ...prevState.forms,
-        ...newForm
-      }
+      formData: {
+        ...prevState.formData,
+        [this.state.selectedForm.name]: {
+          ...prevState.formData[this.state.selectedForm.name],
+          [e.target.name]: e.target.value
+        }
+      },
+      value: e.target.value
     }));
   };
 
@@ -64,12 +63,13 @@ export default class App extends React.Component {
     return (
       <form>
         {fields.map((f, i) => {
-          const { name, el, type, options, value } = f;
+          const { name, el, type, options } = f;
           const fieldMap = {
             input: InputField,
             textarea: TextAreaField,
             select: SelectField
           };
+          const value = this.state.formData[this.state.selectedForm.name].name;
           return (
             <div key={name}>
               <label>{name}</label>
@@ -88,11 +88,23 @@ export default class App extends React.Component {
   };
 
   handleChange = e => {
+    e.persist();
     this.setState({
       selectedForm: {
         name: e.target.value,
         form: this.state.forms[e.target.value]
       }
+    });
+    return Object.values(this.state.forms[e.target.value]).map(field => {
+      return this.setState(prevState => ({
+        formData: {
+          ...prevState.formData,
+          [e.target.value]: {
+            ...prevState.formData[e.target.value],
+            [field.name]: ""
+          }
+        }
+      }));
     });
   };
 
@@ -101,13 +113,14 @@ export default class App extends React.Component {
       <div className="form-app-container">
         <div className="info-container">
           <div>
-            <p>
-              Select form the dropdown to programtically generate a form from
-              JSON.
-            </p>
             <select onChange={this.handleChange}>
+              <option>
+                Select a form to programtically generate HTML from JSON...
+              </option>
               {Object.keys(this.state.forms).map(form => (
-                <option key={form} value={form}>{form}</option>
+                <option key={form} value={form}>
+                  {form}
+                </option>
               ))}
             </select>
           </div>
@@ -118,11 +131,19 @@ export default class App extends React.Component {
           </div>
         </div>
         <div className="form-container">
-          {this.state.selectedForm !== undefined &&
-            this.renderFields(
-              this.state.selectedForm.form,
-              this.handleInputChange
-            )}
+          <>
+            {this.state.selectedForm !== null &&
+              this.renderFields(
+                this.state.selectedForm.form,
+                this.handleInputChange
+              )}
+          </>
+          <div>
+            <p>Captured Form Data</p>
+            <pre>
+              <code>{JSON.stringify(this.state.formData, null, 2)}</code>
+            </pre>
+          </div>
         </div>
       </div>
     );
