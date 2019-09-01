@@ -24,6 +24,40 @@ const SelectField = ({ name, options, value, handleInputChange }) => {
     </select>
   );
 };
+
+const FieldMap = ({
+  fields,
+  handleInputChange,
+  InputField,
+  TextAreaField,
+  SelectField
+}) => {
+  return (
+    <div>
+      {fields.map((f, i) => {
+        const { name, el, type, options } = f;
+        const fieldMap = {
+          input: InputField,
+          textarea: TextAreaField,
+          select: SelectField
+        };
+        const value = this.state.formData[this.state.selectedForm.name].name;
+        return (
+          <div key={name}>
+            <label>{name}</label>
+            {React.createElement(fieldMap[el], {
+              name,
+              value,
+              type,
+              options,
+              handleInputChange
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -33,17 +67,6 @@ export default class App extends React.Component {
       formData: {}
     };
   }
-
-  // componentDidMount() {
-  //   Object.keys(JSONForms).map(key =>
-  //     this.setState(prevState => ({
-  //       formData: {
-  //         ...prevState.formData,
-  //         [key]: {}
-  //       }
-  //     }))
-  //   );
-  // }
 
   handleInputChange = e => {
     e.persist();
@@ -62,27 +85,13 @@ export default class App extends React.Component {
   renderFields = (fields, handleInputChange) => {
     return (
       <form>
-        {fields.map((f, i) => {
-          const { name, el, type, options } = f;
-          const fieldMap = {
-            input: InputField,
-            textarea: TextAreaField,
-            select: SelectField
-          };
-          const value = this.state.formData[this.state.selectedForm.name].name;
-          return (
-            <div key={name}>
-              <label>{name}</label>
-              {React.createElement(fieldMap[el], {
-                name,
-                value,
-                type,
-                options,
-                handleInputChange
-              })}
-            </div>
-          );
-        })}
+        <FieldMap
+          fields={fields}
+          handleInputChange={handleInputChange}
+          InputField={InputField}
+          TextAreaField={TextAreaField}
+          SelectField={SelectField}
+        />
       </form>
     );
   };

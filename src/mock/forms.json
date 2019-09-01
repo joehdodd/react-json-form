@@ -49,5 +49,12 @@
       "type": "number",
       "value": ""
     }
+  ],
+  "dependents": [
+    {
+      "name": "Name",
+      "el": "input",
+      "type": "text"
+    }
   ]
 }
